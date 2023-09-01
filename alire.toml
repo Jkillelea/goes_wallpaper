@@ -1,11 +1,11 @@
 name = "goes_wallpaper"
-description = ""
+description = "Fetch an image from the GOES satellites and set it as a wallpaper"
 version = "0.1.0-dev"
 
 authors = ["Jacob Killelea"]
 maintainers = ["Jacob Killelea <jacobkillelea@gmail.com>"]
 maintainers-logins = ["Jkillelea"]
-licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+licenses = "GPL-3.0-or-later"
 website = ""
 tags = []
 
