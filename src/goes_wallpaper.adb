@@ -1,9 +1,9 @@
 with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Streams;
 with Ada.Direct_IO;
+with Ada.Exceptions;
+with Ada.Streams;
 with AWS.Client;
 with AWS.Response;
-with Ada.Exceptions;
 
 ----------------------------------------------
 --  Get an image from GOES-18 (GOES-West)   --
