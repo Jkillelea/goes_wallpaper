@@ -1,0 +1,15 @@
+name = "goes_wallpaper"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Jacob Killelea"]
+maintainers = ["Jacob Killelea <jacobkillelea@gmail.com>"]
+maintainers-logins = ["Jkillelea"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
+
+executables = ["goes_wallpaper"]
+
+[[depends-on]]
+aws = "^23.0.0"
