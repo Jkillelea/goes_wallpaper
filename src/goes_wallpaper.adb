@@ -22,7 +22,37 @@ procedure Goes_Wallpaper is
     --  for stream elements. You should be able to just write
     --  stream elements to a stream and have it 'just work'
     package Image_IO is new Ada.Direct_IO (Ada.Streams.Stream_Element);
+    use Image_IO;
     Image_File : Image_IO.File_Type;
+
+    ------------------------------------------------------
+    --  Retrieves an ordinary file over HTTP and returns
+    --  the result as an array of stream elements
+    ------------------------------------------------------
+    function Fetch_File_Http (Path : String)
+        return Ada.Streams.Stream_Element_Array
+    is
+        Connection : AWS.Client.HTTP_Connection;
+        Result     : AWS.Response.Data;
+    begin
+        AWS.Client.Create (Connection, Path);
+        AWS.Client.Get (Connection, Result);
+        AWS.Client.Close (Connection);
+
+        declare
+            Image_Data_Elements : constant Ada.Streams.Stream_Element_Array
+            := AWS.Response.Message_Body (Image_Data);
+        begin
+            return Image_Data_Elements;
+        end;
+    end Fetch_File_Http;
+
+    procedure Cleanup is
+    begin
+        if Image_IO.Is_Open (Image_File) then
+            Image_IO.Close (Image_File);
+        end if;
+    end Cleanup;
 
 begin
     Put_Line ("Getting " & Noaa_Url);
@@ -33,21 +63,15 @@ begin
 
     Image_IO.Create (Image_File, Image_IO.Out_File, "./latest.jpg");
 
-    declare
-        Image_Data_Elements : constant Ada.Streams.Stream_Element_Array
-            := AWS.Response.Message_Body (Image_Data);
-    begin
-        for Part of Image_Data_Elements loop
-            Image_IO.Write (Image_File, Part);
-        end loop;
-    end;
+    for Img_Part of Fetch_File_Http (Noaa_Url) loop
+        Image_IO.Write (Image_File, Img_Part);
+    end loop;
 
-    Image_IO.Close (Image_File);
+    Cleanup;
+
 exception
     when E : others =>
-        Put_Line (Ada.Exceptions.Exception_Information (E));
-
-        if Image_IO.Is_Open (Image_File) then
-            Image_IO.Close (Image_File);
-        end if;
+        Cleanup;
+        Put_Line (Ada.Exceptions.Exception_Name (E));
+        Put_Line (Ada.Exceptions.Exception_Message (E));
 end Goes_Wallpaper;
